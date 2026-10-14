@@ -9,7 +9,7 @@ This is the JavaScript version of [go-autofix-action](https://github.com/suzuki-
    - Update aqua-checksums.json (`aqua upc -prune`) in every directory where aqua-checksums.json exists
    - Format code with prettier
    - Fix newlines with [nllint](https://github.com/suzuki-shunsuke/nllint)
-   - Update actions in Markdown files with [pinact](https://github.com/suzuki-shunsuke/pinact) (skipped for pull requests from forks)
+   - Update actions in Markdown files with [pinact](https://github.com/suzuki-shunsuke/pinact), except files under `.github`, which autofix.ci doesn't allow to change
 
 ## How to use
 
