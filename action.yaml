@@ -44,7 +44,8 @@ runs:
       env:
         AQUA_GITHUB_TOKEN: ${{github.token}}
       run: |
-        git ls-files | grep -E '(^|/)aqua-checksums\.json$' | while read -r file; do
+        # Use pathspecs instead of grep, which fails with pipefail if no file matches
+        git ls-files -- 'aqua-checksums.json' '**/aqua-checksums.json' | while read -r file; do
           echo "[INFO] aqua upc -prune in $(dirname "$file")" >&2
           (cd "$(dirname "$file")" && aqua upc -prune)
         done
@@ -89,6 +90,6 @@ runs:
           - name: '${name}(/.*)?'
             ref: 'main|latest|pr/[0-9]+'
         EOF
-        git ls-files | grep -E '\.md$' | xargs -r pinact run -u
+        git ls-files -- '*.md' | xargs -r pinact run -u
 
     - uses: autofix-ci/action@c5b2d67aa2274e7b5a18224e8171550871fc7e4a # v1.3.4
