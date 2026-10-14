@@ -71,11 +71,24 @@ runs:
       shell: bash
 
     # Update actions in documents
+    # Documents of JavaScript Actions refer to their own branches created by release-js-action (latest, pr/<pr number>) and main.
+    # pinact can't pin branches and fails, so they are ignored by a global configuration.
+    # The global configuration is merged with the configuration of the repository.
     - name: Update actions in documents
       if: ${{ !github.event.pull_request.head.repo.fork }}
       shell: bash
       env:
         GITHUB_TOKEN: ${{github.token}}
-      run: git ls-files | grep -E '\.md$' | xargs -r pinact run -u
+      run: |
+        PINACT_GLOBAL_CONFIG=$RUNNER_TEMP/js-autofix-action-pinact.yaml
+        export PINACT_GLOBAL_CONFIG
+        name=$(printf '%s' "$GITHUB_REPOSITORY" | sed 's/[.]/\\./g')
+        cat > "$PINACT_GLOBAL_CONFIG" <<EOF
+        version: 3
+        ignore_actions:
+          - name: '${name}(/.*)?'
+            ref: 'main|latest|pr/[0-9]+'
+        EOF
+        git ls-files | grep -E '\.md$' | xargs -r pinact run -u
 
     - uses: autofix-ci/action@c5b2d67aa2274e7b5a18224e8171550871fc7e4a # v1.3.4
