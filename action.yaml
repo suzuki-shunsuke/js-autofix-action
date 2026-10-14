@@ -75,7 +75,6 @@ runs:
     # pinact can't pin branches and fails, so they are ignored by a global configuration.
     # The global configuration is merged with the configuration of the repository.
     - name: Update actions in documents
-      if: ${{ !github.event.pull_request.head.repo.fork }}
       shell: bash
       env:
         GITHUB_TOKEN: ${{github.token}}
