@@ -88,6 +88,8 @@ runs:
           - name: '${name}(/.*)?'
             ref: 'main|latest|pr/[0-9]+'
         EOF
-        git ls-files | grep -E '\.md$' | xargs -r pinact run -u
+        # Use pathspecs instead of grep, which fails with pipefail if no file matches.
+        # autofix.ci doesn't allow changing files under .github, so they are excluded.
+        git ls-files -- '*.md' ':(exclude).github/**' ':(exclude)**/.github/**' | xargs -r pinact run -u
 
     - uses: autofix-ci/action@c5b2d67aa2274e7b5a18224e8171550871fc7e4a # v1.3.4
