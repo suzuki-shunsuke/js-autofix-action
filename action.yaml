@@ -44,7 +44,8 @@ runs:
       env:
         AQUA_GITHUB_TOKEN: ${{github.token}}
       run: |
-        git ls-files | grep -E '(^|/)aqua-checksums\.json$' | while read -r file; do
+        # Use pathspecs instead of grep, which fails with pipefail if no file matches
+        git ls-files -- 'aqua-checksums.json' '**/aqua-checksums.json' | while read -r file; do
           echo "[INFO] aqua upc -prune in $(dirname "$file")" >&2
           (cd "$(dirname "$file")" && aqua upc -prune)
         done
@@ -88,7 +89,6 @@ runs:
           - name: '${name}(/.*)?'
             ref: 'main|latest|pr/[0-9]+'
         EOF
-        # Use pathspecs instead of grep, which fails with pipefail if no file matches.
         # autofix.ci doesn't allow changing files under .github, so they are excluded.
         git ls-files -- '*.md' ':(exclude).github/**' ':(exclude)**/.github/**' | xargs -r pinact run -u
 
