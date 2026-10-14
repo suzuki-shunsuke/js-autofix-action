@@ -32,7 +32,11 @@ runs:
     - uses: aquaproj/aqua-installer@82d0e83878a8657c4a6f2ff1755d3bfbfc67f329 # v4.1.0
       with:
         aqua_version: ${{inputs.aqua_version}}
-        aqua_opts: -l -a
+        # -a is required to install packages in AQUA_GLOBAL_CONFIG
+        aqua_opts: -a
+        packages: |
+          nllint
+          pinact
 
     # aqua-checksums.json
     - name: Update aqua-checksums.json
@@ -63,10 +67,6 @@ runs:
       run: '"$PRETTIER_DIRECTORY/node_modules/.bin/prettier" --write .'
 
     # Newlines
-    - run: nllint -v
-      shell: bash
-      env:
-        AQUA_GITHUB_TOKEN: ${{github.token}}
     - run: git ls-files | xargs nllint -f -s
       shell: bash
 
