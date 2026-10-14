@@ -1,0 +1,50 @@
+---
+name: autofix.ci
+on:
+  workflow_call:
+    inputs:
+      aqua_version:
+        required: true
+        type: string
+      prettier_directory:
+        description: The directory where package.json and package-lock.json of prettier exist
+        required: false
+        type: string
+        default: .github/prettier
+      node-version-file:
+        required: false
+        type: string
+        default: .node-version
+    secrets:
+      TAKUMI_GUARD_BOT_ID:
+        required: false
+permissions: {}
+jobs:
+  npm:
+    # Install prettier through Takumi Guard, which requires id-token: write.
+    # The autofix job must not have id-token: write.
+    uses: suzuki-shunsuke/download-npm-package-action/.github/workflows/download.yaml@main
+    permissions:
+      contents: read
+      id-token: write
+    with:
+      ref: ${{github.event.pull_request.head.sha}}
+      working_directory: ${{inputs.prettier_directory}}
+      node-version-file: ${{inputs.node-version-file}}
+      artifact_name: node_modules-autofix
+    secrets:
+      TAKUMI_GUARD_BOT_ID: ${{secrets.TAKUMI_GUARD_BOT_ID}}
+
+  autofix:
+    runs-on: ubuntu-26.04
+    needs: npm
+    permissions:
+      contents: read
+    timeout-minutes: 15
+    steps:
+      - uses: $/.
+        with:
+          aqua_version: ${{inputs.aqua_version}}
+          prettier_directory: ${{inputs.prettier_directory}}
+          node-version-file: ${{inputs.node-version-file}}
+          npm_artifact_name: node_modules-autofix
