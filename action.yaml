@@ -19,10 +19,18 @@ inputs:
     description: Node.js version file path
     required: false
     default: .node-version
+  checkout:
+    description: |
+      Whether this action checks out the head commit of the pull request.
+      Set false to change files before this action, e.g. to generate code.
+      Then the caller must check out github.event.pull_request.head.sha.
+    required: false
+    default: "true"
 runs:
   using: composite
   steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      if: inputs.checkout == 'true'
       with:
         ref: ${{ github.event.pull_request.head.sha }}
         persist-credentials: false
