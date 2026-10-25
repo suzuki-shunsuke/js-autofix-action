@@ -40,8 +40,7 @@ runs:
     - uses: aquaproj/aqua-installer@611554c6f0137ba41c8dd15aca8bee82504ea461 # v4.1.1
       with:
         aqua_version: ${{inputs.aqua_version}}
-        # Create only links here. nllint and pinact are installed lazily when they are run,
-        # which is after updating aqua-checksums.json.
+        # Create only links here and install nllint and pinact after updating aqua-checksums.json.
         # Installing packages before that fails with "checksum is required"
         # when a pull request updates a package in the repository's aqua.yaml,
         # because aqua-checksums.json doesn't have the new version's checksums yet.
@@ -59,6 +58,17 @@ runs:
           echo "[INFO] aqua upc -prune in $(dirname "$file")" >&2
           (cd "$(dirname "$file")" && aqua upc -prune)
         done
+
+    - name: Install nllint and pinact
+      uses: aquaproj/aqua-installer@611554c6f0137ba41c8dd15aca8bee82504ea461 # v4.1.1
+      with:
+        aqua_version: ${{inputs.aqua_version}}
+        skip_install_aqua: "true"
+        # -a is required to install packages in AQUA_GLOBAL_CONFIG
+        aqua_opts: -a
+        packages: |
+          nllint
+          pinact
 
     # prettier
     - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
