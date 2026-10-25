@@ -71,7 +71,7 @@ Separate jobs installing npm packages through Takumi Guard from the job running 
 ```yaml
 jobs:
   npm-prettier:
-    uses: suzuki-shunsuke/download-npm-package-action/.github/workflows/download.yaml@7b0c4cea0dbf5a58ec2b35c3c6432584369c1bfe # v0.0.2
+    uses: suzuki-shunsuke/download-npm-package-action/.github/workflows/download.yaml@356be7a431f3fe7ff4a3a61e3dedb3a571f954e7 # v0.0.3
     permissions:
       contents: read
       id-token: write
@@ -82,7 +82,7 @@ jobs:
     secrets:
       TAKUMI_GUARD_BOT_ID: ${{secrets.TAKUMI_GUARD_BOT_ID}}
   npm:
-    uses: suzuki-shunsuke/download-npm-package-action/.github/workflows/download.yaml@7b0c4cea0dbf5a58ec2b35c3c6432584369c1bfe # v0.0.2
+    uses: suzuki-shunsuke/download-npm-package-action/.github/workflows/download.yaml@356be7a431f3fe7ff4a3a61e3dedb3a571f954e7 # v0.0.3
     permissions:
       contents: read
       id-token: write
@@ -104,7 +104,7 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .node-version
-      - uses: suzuki-shunsuke/download-npm-package-action/restore@7b0c4cea0dbf5a58ec2b35c3c6432584369c1bfe # v0.0.2
+      - uses: suzuki-shunsuke/download-npm-package-action/restore@356be7a431f3fe7ff4a3a61e3dedb3a571f954e7 # v0.0.3
         with:
           artifact_name: node_modules
       - run: npm run schema
