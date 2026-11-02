@@ -77,7 +77,7 @@ runs:
     # Use only prettier restored from the artifact.
     # Don't run npm ci here because this job doesn't have id-token: write for Takumi Guard.
     - name: Restore prettier
-      uses: suzuki-shunsuke/download-npm-package-action/restore@356be7a431f3fe7ff4a3a61e3dedb3a571f954e7 # v0.0.3
+      uses: suzuki-shunsuke/download-npm-package-action/restore@cd93d0e45a1804793f6daaf4c24bf55ccf12f494 # v0.0.4
       with:
         working_directory: ${{inputs.prettier_directory}}
         artifact_name: ${{inputs.npm_artifact_name}}
