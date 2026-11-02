@@ -40,7 +40,7 @@ runs:
     - uses: aquaproj/aqua-installer@611554c6f0137ba41c8dd15aca8bee82504ea461 # v4.1.1
       with:
         aqua_version: ${{inputs.aqua_version}}
-        # Create only links here and install nllint and pinact after updating aqua-checksums.json.
+        # Create only links here and install nllint after updating aqua-checksums.json.
         # Installing packages before that fails with "checksum is required"
         # when a pull request updates a package in the repository's aqua.yaml,
         # because aqua-checksums.json doesn't have the new version's checksums yet.
@@ -59,16 +59,14 @@ runs:
           (cd "$(dirname "$file")" && aqua upc -prune)
         done
 
-    - name: Install nllint and pinact
+    - name: Install nllint
       uses: aquaproj/aqua-installer@611554c6f0137ba41c8dd15aca8bee82504ea461 # v4.1.1
       with:
         aqua_version: ${{inputs.aqua_version}}
         skip_install_aqua: "true"
         # -a is required to install packages in AQUA_GLOBAL_CONFIG
         aqua_opts: -a
-        packages: |
-          nllint
-          pinact
+        packages: nllint
 
     # prettier
     - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -90,26 +88,5 @@ runs:
     # Newlines
     - run: git ls-files | xargs nllint -f -s
       shell: bash
-
-    # Update actions in documents
-    # Documents of JavaScript Actions refer to their own branches created by release-js-action (latest, pr/<pr number>) and main.
-    # pinact can't pin branches and fails, so they are ignored by a global configuration.
-    # The global configuration is merged with the configuration of the repository.
-    - name: Update actions in documents
-      shell: bash
-      env:
-        GITHUB_TOKEN: ${{github.token}}
-      run: |
-        PINACT_GLOBAL_CONFIG=$RUNNER_TEMP/js-autofix-action-pinact.yaml
-        export PINACT_GLOBAL_CONFIG
-        name=$(printf '%s' "$GITHUB_REPOSITORY" | sed 's/[.]/\\./g')
-        cat > "$PINACT_GLOBAL_CONFIG" <<EOF
-        version: 3
-        ignore_actions:
-          - name: '${name}(/.*)?'
-            ref: 'main|latest|pr/[0-9]+'
-        EOF
-        # autofix.ci doesn't allow changing files under .github, so they are excluded.
-        git ls-files -- '*.md' ':(exclude).github/**' ':(exclude)**/.github/**' | xargs -r pinact run -u
 
     - uses: autofix-ci/action@c5b2d67aa2274e7b5a18224e8171550871fc7e4a # v1.3.4
