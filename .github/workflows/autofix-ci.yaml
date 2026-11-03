@@ -23,7 +23,7 @@ jobs:
   npm:
     # Install prettier through Takumi Guard, which requires id-token: write.
     # The autofix job must not have id-token: write.
-    uses: suzuki-shunsuke/download-npm-package-action/.github/workflows/download.yaml@cd93d0e45a1804793f6daaf4c24bf55ccf12f494 # v0.0.4
+    uses: suzuki-shunsuke/download-npm-package-action/.github/workflows/download.yaml@v0.0.4
     permissions:
       contents: read
       id-token: write
